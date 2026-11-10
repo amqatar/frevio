@@ -85,6 +85,7 @@ fun Router(state: AppState) {
         is Screen.Player -> PlayerScreen(state, s.titleId, s.videoId, s.stream)
         is Screen.Settings -> SettingsScreen(state, s.section)
         Screen.SignIn -> SignInScreen(state)
+        is Screen.SimklPin -> SimklPinScreen(state, s.profileId)
     }
 }
 

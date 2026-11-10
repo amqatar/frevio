@@ -128,6 +128,38 @@ fun PinScreen(state: AppState, profileId: String) {
 }
 
 @Composable
+fun SimklPinScreen(state: AppState, profileId: String) {
+    val profile = state.profiles.first { it.id == profileId }
+    var seconds by remember { mutableIntStateOf(899) }
+    LaunchedEffect(Unit) { while (seconds > 0) { delay(1000); seconds-- } }
+    val first = rememberInitialFocus()
+    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        T("Connect Simkl for ${profile.name}", 26.sp, weight = FontWeight.Bold)
+        Spacer(Modifier.height(10.dp))
+        T("On your phone or computer, go to", 13.sp, C.Soft)
+        T("simkl.com/pin", 22.sp, C.Accent, FontWeight.Bold)
+        Spacer(Modifier.height(10.dp))
+        T("and enter", 13.sp, C.Soft)
+        Spacer(Modifier.height(6.dp))
+        Box(Modifier.clip(RoundedCornerShape(10.dp)).background(C.Panel).border(1.dp, C.Line, RoundedCornerShape(10.dp)).padding(horizontal = 24.dp, vertical = 12.dp)) {
+            T("4F7K2Q", 34.sp, weight = FontWeight.Bold)
+        }
+        Spacer(Modifier.height(8.dp))
+        T("Code expires in ${seconds / 60}:${(seconds % 60).toString().padStart(2, '0')} · this screen updates when you approve", 9.sp, C.Muted)
+        Spacer(Modifier.height(18.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            PillButton("Simulate approval", {
+                profile.simklUser = "[simkl user]"; profile.simklLastSync = "just now"
+                state.back(); state.say("Simkl connected for ${profile.name}; history imported")
+            }, primary = true, focusRequester = first)
+            PillButton("Cancel", { state.back() })
+        }
+        Spacer(Modifier.height(14.dp))
+        T("The access token is stored by the Marquee server for this profile only.", 9.sp, C.Faint)
+    }
+}
+
+@Composable
 fun SignInScreen(state: AppState) {
     var seconds by remember { mutableIntStateOf(582) }
     var code by remember { mutableStateOf("K7Q-4MX") }

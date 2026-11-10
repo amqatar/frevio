@@ -13,6 +13,7 @@ The TV app reaches v1.0 in about 16 to 22 working weeks, the Android phone app a
 | Central database | Supabase project of its own, separate from the attendance system |
 | API | Versioned REST on Cloudflare Workers, OpenAPI 3.1 spec, generated clients |
 | Test hardware | TCL C6K, soundbar on HDMI eARC |
+| Metadata and tracking | TMDB enrichment, IMDb ratings via MDBList, Simkl tracking per profile; all keys server-side ([spec](metadata-and-tracking.md)) |
 
 ## Phases
 
@@ -20,7 +21,7 @@ The TV app reaches v1.0 in about 16 to 22 working weeks, the Android phone app a
 |---|---|---|---|
 | 0 | Setup: repo, CI APK builds, signing keys, Supabase and Worker projects, developer verification | 0.5 to 1 | CI-built APK installs and shows on the Google TV home screen |
 | 1 | Player test on the C6K and soundbar ([plan](phase1-player-test.md)) | 1 to 2 | Pass/fail table; libmpv in or out; default player rules |
-| 2 | Database and API v1: accounts, devices, profiles (PIN, kids), versioned settings, addons, library, progress, QR sign-in, app updates | 1.5 to 2 | Every endpoint tested; full flow works with `curl` |
+| 2 | Database and API v1: accounts, devices, profiles (PIN, kids), versioned settings, addons, library, progress, QR sign-in, app updates, enriched metadata (TMDB, MDBList) and Simkl linking with server-held keys | 1.5 to 2 | Every endpoint tested; full flow works with `curl` |
 | 3 | Shared core: addon protocol client, offline database (SQLDelight), sync engine, playback rules, stream ranking | 1.5 to 2 | Sign-in, sync, browse and progress run headless |
 | 4 | TV screens: profiles, sign-in, Home, Details, Search, Library, addon manager (QR to a phone page), Settings | 3 to 4 | Browsable alpha; home usable within about 1.5 s of a cold start |
 | 5 | Player: controls, track menus, subtitles, frame-rate matching, passthrough with the Dolby Digital 5.1 fallback, auto engine fallback, resume, next episode, Google TV Continue watching row | 3 to 4 | Feature-complete beta; phase 1 files pass at least as well |

@@ -77,6 +77,7 @@ fun DetailsScreen(state: AppState, titleId: String) {
                     T(t.name, 38.sp, weight = FontWeight.Bold)
                     T(listOf(t.year, if (t.kind == Kind.SERIES) "${t.seasons.size} seasons" else "${t.minutes} min", "★ ${t.rating} IMDb").joinToString("  ·  "), 11.sp, C.Soft)
                     Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) { t.genres.forEach { Chip(it) } }
+                    if (p.setting("meta.tmdb") == "On") RatingsStrip(t, p.setting("meta.ratings"))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         when {
                             t.kind == Kind.MOVIE -> {
@@ -98,7 +99,8 @@ fun DetailsScreen(state: AppState, titleId: String) {
                     }
                     if (t.kind == Kind.MOVIE && movieProgress != null && !movieProgress.isWatched()) Progress(movieProgress.ratio(), Modifier.width(160.dp))
                     T(t.synopsis, 11.sp, C.Soft, maxLines = 3)
-                    T("Cast  [Name], [Name], [Name]  ·  Director  [Name]", 9.sp, C.Muted)
+                    if (p.setting("meta.tmdb") == "On") CastRow()
+                    else T("Cast  [Name], [Name], [Name]  ·  Director  [Name]", 9.sp, C.Muted)
                     T("Best available  4K Dolby Vision · Atmos, from ${p.addons.count { it.streams }} stream addons", 9.sp, C.Muted)
                 }
             }
@@ -120,6 +122,40 @@ fun DetailsScreen(state: AppState, titleId: String) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun RatingsStrip(t: Title, show: String) {
+    val wanted = when (show) {
+        "IMDb only" -> setOf("IMDb")
+        "IMDb, RT" -> setOf("IMDb", "Rotten Tomatoes", "Audience")
+        else -> setOf("IMDb", "Rotten Tomatoes", "Audience", "Metacritic", "Letterboxd")
+    }
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        t.ratings.filter { it.first in wanted }.forEach { (source, value) ->
+            Row(
+                Modifier.clip(RoundedCornerShape(5.dp)).background(C.Glass).padding(horizontal = 7.dp, vertical = 3.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically,
+            ) {
+                T(source, 8.sp, C.Muted, FontWeight.SemiBold)
+                T(value, 9.sp, weight = FontWeight.Bold)
+            }
+        }
+        T("via MDBList", 8.sp, C.Faint)
+    }
+}
+
+@Composable
+private fun CastRow() {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        listOf("[Actor]" to "[Role]", "[Actor]" to "[Role]", "[Actor]" to "[Role]", "[Director]" to "Director").forEachIndexed { i, (n, r) ->
+            Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(20.dp).clip(CircleShape).background(listOf(C.Raised, Color(0xFF33395A), Color(0xFF2F4A42), Color(0xFF4B3F2A))[i]))
+                Column { T(n, 8.sp, weight = FontWeight.SemiBold); T(r, 7.sp, C.Muted) }
+            }
+        }
+        T("cast photos from TMDB", 8.sp, C.Faint)
     }
 }
 
@@ -256,7 +292,7 @@ fun PlayerScreen(state: AppState, titleId: String, videoId: String, stream: Stre
                     T(t.name, 10.sp, C.Soft)
                     T(ep?.let { "S${it.season} E${it.number} · ${it.title}" } ?: t.name, 16.sp, weight = FontWeight.Bold)
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) { Chip(stream.quality + if ("Dolby Vision" in stream.formats) " Dolby Vision" else " HDR10", bg = C.Glass); Chip(stream.audio.substringBefore(" ·").ifEmpty { "Audio" }, bg = C.Glass); Chip("23.976 Hz", bg = C.Glass) }
+                Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) { if (profile.simklUser != null) Chip("● Scrobbling to Simkl", C.Good, C.Glass); Chip(stream.quality + if ("Dolby Vision" in stream.formats) " Dolby Vision" else " HDR10", bg = C.Glass); Chip(stream.audio.substringBefore(" ·").ifEmpty { "Audio" }, bg = C.Glass); Chip("23.976 Hz", bg = C.Glass) }
             }
             Column(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(horizontal = 48.dp, vertical = 30.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Progress(position.toDouble() / durationMs, Modifier.fillMaxWidth(), 4.dp)

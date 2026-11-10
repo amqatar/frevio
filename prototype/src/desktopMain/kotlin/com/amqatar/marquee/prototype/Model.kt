@@ -32,6 +32,18 @@ data class Title(
 ) {
     val seasons: List<Int> get() = episodes.map { it.season }.distinct().sorted()
     val synopsis: String get() = "Synopsis from the metadata addon for $name. Two to three lines on screen."
+
+    /** Mock MDBList ratings (IMDb, Rotten Tomatoes critics/audience, Metacritic, Letterboxd). */
+    val ratings: List<Pair<String, String>> get() {
+        val n = id.drop(1).toInt()
+        return listOf(
+            "IMDb" to rating,
+            "Rotten Tomatoes" to "${60 + n * 3 % 39}%",
+            "Audience" to "${55 + n * 7 % 44}%",
+            "Metacritic" to "${50 + n * 5 % 45}",
+            "Letterboxd" to "${2 + n % 3}.${(n * 7) % 10}",
+        )
+    }
 }
 
 private val tints = listOf(0xFF2B3A55, 0xFF4A3046, 0xFF2F4A42, 0xFF4B3F2A, 0xFF33395A, 0xFF4A2F2F, 0xFF2C4452, 0xFF3F3A52).map { Color(it) }
@@ -99,6 +111,9 @@ class Profile(id: String, name: String, val color: Color, kids: Boolean = false,
     val progress = mutableStateMapOf<String, ProgressEntry>()
     val settings = mutableStateMapOf<String, String>()
     val addons = mutableStateListOf<Addon>().apply { addAll(defaultAddons) }
+    /** Simkl account linked to this profile (token held by the API server, never the TV). */
+    var simklUser by mutableStateOf<String?>(null)
+    var simklLastSync by mutableStateOf<String?>(null)
 
     fun continueRow(): List<ContinueItem> = continueWatching(progress.values) { t, v -> Mock.nextEpisode(t, v) }
 
@@ -114,6 +129,7 @@ sealed interface Screen {
     data class Player(val titleId: String, val videoId: String, val stream: StreamOption) : Screen
     data class Settings(val section: String = "Audio") : Screen
     data object SignIn : Screen
+    data class SimklPin(val profileId: String) : Screen
 }
 
 enum class Tab(val label: String) { SEARCH("Search"), HOME("Home"), MOVIES("Movies"), SERIES("Series"), LIBRARY("Library") }
@@ -180,4 +196,7 @@ val SettingDefaults = mapOf(
     "subs.language" to "Off",
     "subs.size" to "Medium",
     "subs.background" to "Shadow",
+    "meta.tmdb" to "On",
+    "meta.language" to "English",
+    "meta.ratings" to "IMDb, RT, Metacritic, Letterboxd",
 )

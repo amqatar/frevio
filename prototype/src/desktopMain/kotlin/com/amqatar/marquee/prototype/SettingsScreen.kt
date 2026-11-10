@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private val sections = listOf("Profile", "Playback", "Audio", "Subtitles", "Addons", "Devices & account", "About & updates")
+private val sections = listOf("Profile", "Playback", "Audio", "Subtitles", "Addons", "Integrations", "Devices & account", "About & updates")
 
 private val choices = mapOf(
     "audio.fallback" to listOf("Automatic", "Always PCM", "Always Dolby Digital 5.1", "Stereo"),
@@ -42,6 +42,9 @@ private val choices = mapOf(
     "subs.language" to listOf("Off", "English", "Arabic", "Forced only"),
     "subs.size" to listOf("Medium", "Large", "Small"),
     "subs.background" to listOf("Shadow", "Box", "None"),
+    "meta.tmdb" to listOf("On", "Off"),
+    "meta.language" to listOf("English", "Arabic", "Original"),
+    "meta.ratings" to listOf("IMDb, RT, Metacritic, Letterboxd", "IMDb, RT", "IMDb only"),
 )
 
 @Composable
@@ -122,6 +125,24 @@ fun SettingsScreen(state: AppState, section: String) {
                         T("Order matters: the first addon with details for a title is used, and home rows follow this order.", 9.sp, C.Muted, modifier = Modifier.padding(top = 8.dp))
                     }
                 }
+                "Integrations" -> {
+                    val p = state.current
+                    item {
+                        ActionRow(
+                            "Simkl",
+                            if (p.simklUser != null) "Tracking ${p.name}'s watching · last sync ${p.simklLastSync ?: "never"}" else "Track what ${p.name} watches, import history into Continue watching",
+                            if (p.simklUser != null) "Connected as ${p.simklUser}" else "Connect",
+                        ) {
+                            if (p.simklUser != null) { p.simklUser = null; p.simklLastSync = null; state.say("Simkl disconnected for ${p.name}") }
+                            else state.go(Screen.SimklPin(p.id))
+                        }
+                    }
+                    if (p.simklUser != null) item { ActionRow("Sync now", "Pulls Simkl history and watchlist into this profile", "") { p.simklLastSync = "just now"; state.say("Synced with Simkl (prototype)") } }
+                    item { ChoiceRow(state, "meta.tmdb", "Enriched metadata (TMDB)", "Backdrops, logos, cast photos, trailers, localized text") }
+                    item { ChoiceRow(state, "meta.language", "Metadata language", "Titles and synopses where TMDB has a translation") }
+                    item { ChoiceRow(state, "meta.ratings", "Ratings on title pages", "From MDBList: IMDb, Rotten Tomatoes, Metacritic, Letterboxd") }
+                    item { T("API keys for TMDB, MDBList and Simkl are held by the Marquee server, never on this TV.", 9.sp, C.Muted, modifier = Modifier.padding(top = 6.dp)) }
+                }
                 "Devices & account" -> {
                     item { ActionRow("Account", if (state.signedIn) "Profiles, library and progress sync to every device" else "Not signed in: everything stays on this TV", if (state.signedIn) "[account email]" else "Sign in") {
                         if (state.signedIn) { state.signedIn = false; state.say("Signed out (prototype)") } else state.go(Screen.SignIn)
@@ -134,6 +155,7 @@ fun SettingsScreen(state: AppState, section: String) {
                     item { ActionRow("Version", "Updates download from your release server and install over this one", "1.0.0 prototype") { state.say("You're up to date (prototype)") } }
                     item { ActionRow("Check for updates", "GET /v1/app/latest", "") { state.say("You're up to date (prototype)") } }
                     item { ActionRow("Player diagnostics", "Decoder, HDR, dropped frames and audio path overlay", "Off") { state.say("Toggles the overlay from the player test app") } }
+                    item { ActionRow("Data sources", "This product uses the TMDB API but is not endorsed or certified by TMDB. Ratings via MDBList. Tracking via Simkl.", "TMDB") { state.say("TMDB logo shown here in the real app (required attribution)") } }
                 }
             }
         }
