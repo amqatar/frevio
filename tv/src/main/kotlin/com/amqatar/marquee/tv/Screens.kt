@@ -147,7 +147,7 @@ private fun HomeScreen(
         DevicePanel(device, onRefreshDevice, Modifier.width(380.dp).fillMaxHeight())
         LazyColumn(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             item {
-                Text("Marquee player test", style = MaterialTheme.typography.headlineMedium, color = Color.White)
+                Text("Frevio player test", style = MaterialTheme.typography.headlineMedium, color = Color.White)
                 Text("Serve the test-media folder over HTTP on your network and enter its address.", color = Muted, fontSize = 14.sp)
             }
             item {

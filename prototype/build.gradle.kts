@@ -26,7 +26,7 @@ compose.desktop {
         mainClass = "com.amqatar.marquee.prototype.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Dmg, TargetFormat.Deb)
-            packageName = "Marquee Prototype"
+            packageName = "Frevio Prototype"
             packageVersion = "1.0.0"
         }
     }

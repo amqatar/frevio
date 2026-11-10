@@ -1,6 +1,6 @@
-# Marquee
+# Frevio
 
-A lightweight media hub for Google TV: browses movie and series metadata from Stremio-protocol addons, plays video and audio with Media3 and libmpv, and syncs profiles and settings to a central database through a versioned API. Distributed by sideloading only.
+Frevio is a lightweight media hub for Google TV: browses movie and series metadata from Stremio-protocol addons, plays video and audio with Media3 and libmpv, and syncs profiles and settings to a central database through a versioned API. Distributed by sideloading only.
 
 **Current phase: 1, player test.** The `tv` app is a test harness, not the product. It measures what the target TV and soundbar play before the real screens are built. See [docs/phase1-player-test.md](docs/phase1-player-test.md).
 

@@ -34,7 +34,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun Logo() = Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(7.dp)) {
     Box(Modifier.size(22.dp).clip(RoundedCornerShape(6.dp)).background(C.Accent), contentAlignment = Alignment.Center) { Icon(Icons.Play, C.Bg, 10.dp) }
-    T("Marquee", 15.sp, weight = FontWeight.Bold)
+    T("Frevio", 15.sp, weight = FontWeight.Bold)
 }
 
 @Composable
@@ -155,7 +155,7 @@ fun SimklPinScreen(state: AppState, profileId: String) {
             PillButton("Cancel", { state.back() })
         }
         Spacer(Modifier.height(14.dp))
-        T("The access token is stored by the Marquee server for this profile only.", 9.sp, C.Faint)
+        T("The access token is stored by the Frevio server for this profile only.", 9.sp, C.Faint)
     }
 }
 
@@ -169,7 +169,7 @@ fun AiKeyScreen(state: AppState) {
             listOf(
                 "Scan the code with your phone, or go to [your-domain]/ai-key",
                 "Paste your Claude API key (from the Anthropic Console)",
-                "We check it, then store it encrypted on the Marquee server",
+                "We check it, then store it encrypted on the Frevio server",
             ).forEachIndexed { i, s ->
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(22.dp).clip(CircleShape).background(C.Raised), contentAlignment = Alignment.Center) { T("${i + 1}", 10.sp, C.Accent, FontWeight.Bold) }

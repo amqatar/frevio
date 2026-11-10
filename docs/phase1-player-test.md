@@ -17,7 +17,7 @@ adb connect <tv-ip>:5555        # accept the prompt on the TV the first time
 adb install -r tv-debug.apk
 ```
 
-Every test build is signed with the same debug key, so `-r` installs over the previous one and keeps your results. The app appears in the Google TV *Apps* row as **Marquee Player Test**.
+Every test build is signed with the same debug key, so `-r` installs over the previous one and keeps your results. The app appears in the Google TV *Apps* row as **Frevio Player Test**.
 
 ## 3. Serve the test files
 

@@ -170,7 +170,7 @@ fun SettingsScreen(state: AppState, section: String) {
                     }
                     item { ChoiceRow(state, "ai.recommendations", "AI recommendations for ${state.current.name}", if (state.aiKeyLast4 == null) "Needs a Claude API key. Until then: Because you watched rows" else "A Recommended for you row with a reason per pick. Off: Because you watched rows") }
                     if (state.current.notInterested.isNotEmpty()) item { ActionRow("Not interested list", "${state.current.notInterested.size} titles hidden from recommendations", "Clear") { state.current.notInterested.clear(); state.say("Not interested list cleared") } }
-                    item { T("API keys for TMDB, MDBList, Simkl and Claude are held by the Marquee server, never on this TV.", 9.sp, C.Muted, modifier = Modifier.padding(top = 6.dp)) }
+                    item { T("API keys for TMDB, MDBList, Simkl and Claude are held by the Frevio server, never on this TV.", 9.sp, C.Muted, modifier = Modifier.padding(top = 6.dp)) }
                 }
                 "Devices & account" -> {
                     item { ActionRow("Account", if (state.signedIn) "Profiles, library and progress sync to every device" else "Not signed in: everything stays on this TV", if (state.signedIn) "[account email]" else "Sign in") {

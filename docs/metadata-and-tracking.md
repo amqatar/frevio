@@ -40,7 +40,7 @@ Addons stay the source of catalogs and streams. Four outside services add detail
 
 ## Decision needed: commercial or not
 
-If Marquee stays free and private, TMDB's non-commercial terms fit. If it ever earns money (a subscription, ads or a paid tier), we'd need a TMDB commercial agreement and an MDBList supporter or commercial tier before launch. Simkl's app registration terms should be re-read at that point too.
+If Frevio stays free and private, TMDB's non-commercial terms fit. If it ever earns money (a subscription, ads or a paid tier), we'd need a TMDB commercial agreement and an MDBList supporter or commercial tier before launch. Simkl's app registration terms should be re-read at that point too.
 
 ## Phase placement
 

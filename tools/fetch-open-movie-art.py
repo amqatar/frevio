@@ -22,7 +22,7 @@ import urllib.parse
 import urllib.request
 
 API = "https://commons.wikimedia.org/w/api.php"
-UA = "MarqueePrototypeBuild/1.1 (open-movie artwork fetch for a UI mockup)"
+UA = "FrevioPrototypeBuild/1.1 (open-movie artwork fetch for a UI mockup)"
 OUT = os.path.join(os.path.dirname(__file__), "..", "prototype", "src", "desktopMain", "resources", "art")
 
 # (app id, kind, exact Commons file name). Verified matches only; add more the same way.
