@@ -70,6 +70,7 @@ fun DetailsScreen(state: AppState, titleId: String) {
         item {
             Box(Modifier.fillMaxWidth().height(if (t.kind == Kind.SERIES) 330.dp else 540.dp)) {
                 Box(Modifier.fillMaxWidth().height(330.dp).background(t.tint))
+                ArtImage(t.backdropArt, Modifier.fillMaxWidth().height(330.dp))
                 Box(Modifier.fillMaxWidth().height(330.dp).background(Brush.horizontalGradient(0f to C.Bg, 0.5f to C.Bg.copy(alpha = 0.88f), 1f to C.Bg.copy(alpha = 0.2f))))
                 Box(Modifier.fillMaxWidth().height(330.dp).background(Brush.verticalGradient(0.5f to Color.Transparent, 1f to C.Bg)))
                 Column(Modifier.padding(start = 48.dp, top = 36.dp).width(470.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
@@ -142,7 +143,7 @@ private fun RatingsStrip(t: Title, show: String) {
                 T(value, 9.sp, weight = FontWeight.Bold)
             }
         }
-        T("via MDBList", 8.sp, C.Faint)
+        T("via MDBList · sample values", 8.sp, C.Faint)
     }
 }
 
@@ -167,6 +168,7 @@ private fun EpisodeCard(state: AppState, t: Title, e: Episode) {
             { if (e.airsLater) state.say("Airs Friday. You'll see it here when it's out.") else state.go(Screen.Streams(t.id, e.id)) },
             Modifier.fillMaxWidth().height(96.dp), background = if (e.airsLater) C.Panel else t.tint,
         ) {
+            if (!e.airsLater) ArtImage(t.backdropArt, Modifier.fillMaxSize())
             if (pr?.isWatched() == true) Box(Modifier.fillMaxSize().padding(6.dp), contentAlignment = Alignment.TopEnd) {
                 Box(Modifier.size(18.dp).clip(CircleShape).background(C.Bg.copy(alpha = 0.7f)), contentAlignment = Alignment.Center) { Icon(Icons.Check, C.Accent, 11.dp) }
             }
@@ -190,6 +192,7 @@ fun StreamsScreen(state: AppState, titleId: String, videoId: String) {
     val first = rememberInitialFocus(filter)
     Box(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize().background(t.tint))
+        ArtImage(t.backdropArt, Modifier.fillMaxSize())
         Box(Modifier.fillMaxSize().background(Color(0xC706070A)))
         Column(Modifier.padding(start = 48.dp, top = 60.dp)) { T(t.name, 38.sp, C.Text.copy(alpha = 0.5f), FontWeight.Bold) }
         Column(
@@ -278,7 +281,9 @@ fun PlayerScreen(state: AppState, titleId: String, videoId: String, stream: Stre
             }
         },
     ) {
-        Box(Modifier.fillMaxSize().background(Color(0xFF1B2434)), contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxSize().background(Color(0xFF1B2434)))
+        ArtImage(t.backdropArt, Modifier.fillMaxSize(), alpha = 0.55f)
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 T("SIMULATED PLAYBACK (24× speed)", 9.sp, C.Faint, FontWeight.SemiBold)
                 T(stream.quality + " · " + stream.formats, 10.sp, C.Faint)

@@ -52,6 +52,10 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      - name: Fetch open-movie artwork (Wikimedia Commons, free licences only)
+        continue-on-error: true
+        run: python tools/fetch-open-movie-art.py
+
       - name: Build Windows app
         run: ./gradlew :prototype:createDistributable
 

@@ -114,7 +114,8 @@ private fun HomeContent(state: AppState) {
 private fun Hero(state: AppState, t: Title, focus: FocusRequester) {
     Box(Modifier.fillMaxWidth().height(300.dp)) {
         Box(Modifier.fillMaxSize().background(t.tint.copy(alpha = 0.9f)))
-        Box(Modifier.fillMaxSize().padding(20.dp), contentAlignment = Alignment.TopEnd) { T("BACKDROP", 8.sp, C.Faint) }
+        ArtImage(t.backdropArt, Modifier.fillMaxSize())
+        if (!Art.has(t.backdropArt)) Box(Modifier.fillMaxSize().padding(20.dp), contentAlignment = Alignment.TopEnd) { T("BACKDROP", 8.sp, C.Faint) }
         Box(Modifier.fillMaxSize().background(Brush.horizontalGradient(0f to C.Bg, 0.45f to C.Bg.copy(alpha = 0.85f), 1f to C.Bg.copy(alpha = 0.1f))))
         Box(Modifier.fillMaxSize().background(Brush.verticalGradient(0.55f to Color.Transparent, 1f to C.Bg)))
         Column(Modifier.align(Alignment.BottomStart).padding(start = 36.dp, bottom = 22.dp).width(430.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
@@ -161,7 +162,8 @@ private fun ContinueCard(state: AppState, item: ContinueItem) {
     }
     Column(Modifier.width(176.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         FocusBox({ state.go(Screen.Streams(t.id, item.videoId)) }, Modifier.fillMaxWidth().height(99.dp), background = t.tint) {
-            Box(Modifier.fillMaxSize().padding(8.dp), contentAlignment = Alignment.TopStart) { T("EPISODE STILL", 7.sp, C.Soft) }
+            ArtImage(t.backdropArt, Modifier.fillMaxSize())
+            if (!Art.has(t.backdropArt)) Box(Modifier.fillMaxSize().padding(8.dp), contentAlignment = Alignment.TopStart) { T("EPISODE STILL", 7.sp, C.Soft) }
             if (item.inProgress) Box(Modifier.fillMaxSize().padding(8.dp), contentAlignment = Alignment.BottomCenter) { Progress(item.ratio, Modifier.fillMaxWidth()) }
         }
         T(t.name, 11.sp, weight = FontWeight.SemiBold, maxLines = 1)
@@ -173,7 +175,8 @@ private fun ContinueCard(state: AppState, item: ContinueItem) {
 fun PosterCard(state: AppState, t: Title, focus: FocusRequester? = null) {
     Column(Modifier.width(100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
         FocusBox({ state.go(Screen.Details(t.id)) }, Modifier.width(100.dp).height(150.dp), focusRequester = focus, background = t.tint) {
-            Box(Modifier.fillMaxSize().padding(8.dp), contentAlignment = Alignment.BottomStart) { T(t.name, 10.sp, weight = FontWeight.SemiBold) }
+            ArtImage(t.posterArt, Modifier.fillMaxSize())
+            if (!Art.has(t.posterArt)) Box(Modifier.fillMaxSize().padding(8.dp), contentAlignment = Alignment.BottomStart) { T(t.name, 10.sp, weight = FontWeight.SemiBold) }
             if (t.id in state.current.library) Box(Modifier.fillMaxSize().padding(6.dp), contentAlignment = Alignment.TopEnd) {
                 Box(Modifier.size(16.dp).clip(CircleShape).background(C.Bg.copy(alpha = 0.7f)), contentAlignment = Alignment.Center) { Icon(Icons.Check, C.Accent, 10.dp) }
             }

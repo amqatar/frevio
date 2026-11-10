@@ -29,7 +29,12 @@ data class Title(
     val catalog: String,
     val addon: String,
     val episodes: List<Episode> = emptyList(),
+    /** Artwork id under resources/art (Blender open movies), or null for a coloured placeholder. */
+    val art: String? = null,
 ) {
+    val posterArt: String? get() = art?.let { "$it-poster.jpg" }
+    val backdropArt: String? get() = art?.let { "$it-backdrop.jpg" }
+
     val seasons: List<Int> get() = episodes.map { it.season }.distinct().sorted()
     val synopsis: String get() = "Synopsis from the metadata addon for $name. Two to three lines on screen."
 
@@ -49,15 +54,39 @@ data class Title(
 private val tints = listOf(0xFF2B3A55, 0xFF4A3046, 0xFF2F4A42, 0xFF4B3F2A, 0xFF33395A, 0xFF4A2F2F, 0xFF2C4452, 0xFF3F3A52).map { Color(it) }
 
 object Mock {
-    val movies: List<Title> = (1..14).map { i ->
+    // Blender Foundation open movies (Creative Commons). Years and runtimes are approximate; ratings are sample values.
+    private data class Open(val name: String, val year: String, val minutes: Int, val genres: List<String>, val art: String, val kids: Boolean)
+    private val open = listOf(
+        Open("Big Buck Bunny", "2008", 10, listOf("Animation", "Comedy"), "bbb", true),
+        Open("Sintel", "2010", 15, listOf("Animation", "Fantasy"), "sintel", false),
+        Open("Tears of Steel", "2012", 12, listOf("Sci-Fi", "Action"), "tos", false),
+        Open("Elephants Dream", "2006", 11, listOf("Animation", "Sci-Fi"), "ed", false),
+        Open("Cosmos Laundromat", "2015", 12, listOf("Animation", "Comedy"), "cosmos", false),
+        Open("Spring", "2019", 8, listOf("Animation", "Fantasy"), "spring", true),
+        Open("Agent 327: Operation Barbershop", "2017", 4, listOf("Animation", "Action"), "agent327", false),
+        Open("Sprite Fright", "2021", 10, listOf("Animation", "Horror", "Comedy"), "sprite", false),
+        Open("Coffee Run", "2020", 3, listOf("Animation", "Comedy"), "coffee", true),
+        Open("Hero", "2018", 4, listOf("Animation", "Action"), "hero", false),
+        Open("Wing It!", "2023", 4, listOf("Animation", "Comedy"), "wingit", true),
+    )
+    val movies: List<Title> = open.mapIndexed { idx, o ->
+        val i = idx + 1
         Title(
-            id = "m$i", kind = Kind.MOVIE, name = "Sample Movie $i", year = "${2012 + i}", rating = "${6 + i % 4}.${i % 10}",
-            genres = listOf(listOf("Drama", "Thriller"), listOf("Comedy"), listOf("Action", "Sci-Fi"), listOf("Animation", "Family"))[i % 4],
-            minutes = 92 + i * 4, tint = tints[i % tints.size], kids = i % 4 == 3,
-            catalog = if (i <= 9) "Popular movies" else "New releases", addon = if (i <= 9) "Cinemeta" else "[Addon B]",
+            id = "m$i", kind = Kind.MOVIE, name = o.name, year = o.year, rating = "${6 + i % 4}.${i % 10}",
+            genres = o.genres, minutes = o.minutes, tint = tints[i % tints.size], kids = o.kids,
+            catalog = if (i <= 7) "Popular movies" else "New releases", addon = if (i <= 7) "Cinemeta" else "[Addon B]", art = o.art,
         )
     }
-    val series: List<Title> = (1..6).map { i ->
+    private val caminandes = Title(
+        id = "s1", kind = Kind.SERIES, name = "Caminandes", year = "2013–2016", rating = "7.4", genres = listOf("Animation", "Comedy"),
+        minutes = 3, tint = tints[4], kids = true, catalog = "Popular series", addon = "Cinemeta", art = "caminandes",
+        episodes = listOf(
+            Episode("s1:1:1", 1, 1, "Llama Drama", 2),
+            Episode("s1:1:2", 1, 2, "Gran Dillama", 3),
+            Episode("s1:1:3", 1, 3, "Llamigos", 3),
+        ),
+    )
+    val series: List<Title> = listOf(caminandes) + (2..6).map { i ->
         val seasons = 2 + i % 2
         Title(
             id = "s$i", kind = Kind.SERIES, name = "Sample Series ${'A' + i - 1}", year = "${2017 + i}–", rating = "${7 + i % 3}.${(i * 3) % 10}",
@@ -175,12 +204,12 @@ class AppState {
 private fun Profile.seedProgress() {
     val now = System.currentTimeMillis()
     val min = 60_000L
-    progress["s1:2:4"] = ProgressEntry("s1", "s1:2:4", 30 * min, 48 * min, now - 1 * min)
-    progress["m3"] = ProgressEntry("m3", "m3", 41 * min, 104 * min, now - 60 * min)
+    progress["s1:1:1"] = ProgressEntry("s1", "s1:1:1", 2 * min, 2 * min, now - 3000 * min)
+    progress["s1:1:2"] = ProgressEntry("s1", "s1:1:2", 90_000, 3 * min, now - 1 * min)
+    progress["m3"] = ProgressEntry("m3", "m3", 5 * min, 12 * min, now - 60 * min)
     progress["s2:1:6"] = ProgressEntry("s2", "s2:1:6", 47 * min, 48 * min, now - 120 * min)
-    progress["m7"] = ProgressEntry("m7", "m7", 96 * min, 120 * min, now - 300 * min)
-    listOf("s1:1:1", "s1:1:2", "s1:1:3").forEach { progress[it] = ProgressEntry("s1", it, 47 * min, 48 * min, now - 3000 * min) }
-    library.addAll(listOf("s1", "m3", "m9"))
+    progress["m2"] = ProgressEntry("m2", "m2", 9 * min, 15 * min, now - 300 * min)
+    library.addAll(listOf("s1", "m3", "m8"))
 }
 
 val SettingDefaults = mapOf(

@@ -156,6 +156,10 @@ fun SettingsScreen(state: AppState, section: String) {
                     item { ActionRow("Check for updates", "GET /v1/app/latest", "") { state.say("You're up to date (prototype)") } }
                     item { ActionRow("Player diagnostics", "Decoder, HDR, dropped frames and audio path overlay", "Off") { state.say("Toggles the overlay from the player test app") } }
                     item { ActionRow("Data sources", "This product uses the TMDB API but is not endorsed or certified by TMDB. Ratings via MDBList. Tracking via Simkl.", "TMDB") { state.say("TMDB logo shown here in the real app (required attribution)") } }
+                    item { T("IMAGE CREDITS", 8.sp, C.Muted, FontWeight.SemiBold, Modifier.padding(top = 10.dp)) }
+                    if (Art.credits.isEmpty()) item { T("No artwork bundled in this build: placeholders shown.", 9.sp, C.Muted) }
+                    Art.credits.forEach { c -> item { T("${c.file} · ${c.author} · ${c.license}", 8.sp, C.Muted, maxLines = 2) } }
+                    item { T("Images of Blender Foundation open movies from Wikimedia Commons, used under their stated licences.", 8.sp, C.Faint) }
                 }
             }
         }

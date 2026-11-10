@@ -10,3 +10,4 @@ captures/
 *.jks
 test-media/
 !tv/debug.keystore
+prototype/src/desktopMain/resources/art/
