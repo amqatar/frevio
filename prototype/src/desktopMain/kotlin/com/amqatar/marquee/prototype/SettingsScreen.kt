@@ -142,7 +142,15 @@ fun SettingsScreen(state: AppState, section: String) {
                     item { ChoiceRow(state, "meta.tmdb", "Enriched metadata (TMDB)", "Backdrops, logos, cast photos, trailers, localized text") }
                     item { ChoiceRow(state, "meta.language", "Metadata language", "Titles and synopses where TMDB has a translation") }
                     item { ChoiceRow(state, "meta.ratings", "Ratings on title pages", "From MDBList: IMDb, Rotten Tomatoes, Metacritic, Letterboxd") }
-                    item { ChoiceRow(state, "ai.recommendations", "AI recommendations", "A Recommended for you row with a reason per pick, made on the server with Claude. Off: Because you watched rows instead") }
+                    item {
+                        ActionRow(
+                            "Claude API key",
+                            if (state.aiKeyLast4 != null) "Your key powers AI picks for every profile; usage bills to your Anthropic account" else "Needed for AI recommendations. Added from your phone; stored encrypted on the server",
+                            if (state.aiKeyLast4 != null) "Set ••••${state.aiKeyLast4}" else "Add key",
+                        ) { state.go(Screen.AiKey) }
+                    }
+                    if (state.aiKeyLast4 != null) item { ActionRow("Remove Claude key", "Deletes it from the server; AI picks stop", "") { state.aiKeyLast4 = null; state.say("Claude key removed") } }
+                    item { ChoiceRow(state, "ai.recommendations", "AI recommendations for ${state.current.name}", if (state.aiKeyLast4 == null) "Needs a Claude API key. Until then: Because you watched rows" else "A Recommended for you row with a reason per pick. Off: Because you watched rows") }
                     if (state.current.notInterested.isNotEmpty()) item { ActionRow("Not interested list", "${state.current.notInterested.size} titles hidden from recommendations", "Clear") { state.current.notInterested.clear(); state.say("Not interested list cleared") } }
                     item { T("API keys for TMDB, MDBList, Simkl and Claude are held by the Marquee server, never on this TV.", 9.sp, C.Muted, modifier = Modifier.padding(top = 6.dp)) }
                 }

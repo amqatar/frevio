@@ -160,6 +160,42 @@ fun SimklPinScreen(state: AppState, profileId: String) {
 }
 
 @Composable
+fun AiKeyScreen(state: AppState) {
+    val first = rememberInitialFocus()
+    Row(Modifier.fillMaxSize().padding(horizontal = 80.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(70.dp)) {
+        Column(Modifier.width(400.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            T("✦ AI recommendations", 11.sp, C.Accent, FontWeight.SemiBold)
+            T("Add your Claude API key", 30.sp, weight = FontWeight.Bold)
+            listOf(
+                "Scan the code with your phone, or go to [your-domain]/ai-key",
+                "Paste your Claude API key (from the Anthropic Console)",
+                "We check it, then store it encrypted on the Marquee server",
+            ).forEachIndexed { i, s ->
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.size(22.dp).clip(CircleShape).background(C.Raised), contentAlignment = Alignment.Center) { T("${i + 1}", 10.sp, C.Accent, FontWeight.Bold) }
+                    T(s, 12.sp)
+                }
+            }
+            T("Usage is billed to your Anthropic account: about \$1 per profile per month at the default setting. Devices only ever see the last 4 characters.", 9.sp, C.Muted)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                PillButton("Simulate key added", { state.aiKeyLast4 = "a1B2"; state.back(); state.say("Key checked and saved. AI picks are on") }, primary = true, focusRequester = first)
+                PillButton("Simulate invalid key", { state.say("Key rejected by Anthropic: check it or add credit, then try again") })
+                PillButton("Not now", { state.back() })
+            }
+        }
+        Column(
+            Modifier.clip(RoundedCornerShape(14.dp)).background(C.Panel).border(1.dp, C.Line, RoundedCornerShape(14.dp)).padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Box(Modifier.size(170.dp).clip(RoundedCornerShape(8.dp)).background(Color.White), contentAlignment = Alignment.Center) {
+                T("QR code\n(one-time link)", 10.sp, Color(0xFF4A5266), FontWeight.SemiBold)
+            }
+            T("Link expires in 10 minutes", 9.sp, C.Muted)
+        }
+    }
+}
+
+@Composable
 fun SignInScreen(state: AppState) {
     var seconds by remember { mutableIntStateOf(582) }
     var code by remember { mutableStateOf("K7Q-4MX") }

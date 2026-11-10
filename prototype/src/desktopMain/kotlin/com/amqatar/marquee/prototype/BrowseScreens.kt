@@ -99,10 +99,16 @@ private fun HomeContent(state: AppState) {
                 items(cw, key = { it.titleId }) { ContinueCard(state, it) }
             }
         }
-        if (profile.setting("ai.recommendations") == "On") {
-            val recs = state.recommendations()
+        val recs = state.recommendations()
+        if (state.aiActive()) {
             if (recs.isNotEmpty()) item(key = "ai") {
-                CatalogRow(title = "Recommended for you  ✦ AI") { items(recs, key = { "ai-" + it.first.id }) { (t, why) -> RecommendationCard(state, t, why) } }
+                CatalogRow(title = "Recommended for you  ✦ AI") { items(recs, key = { "ai-" + it.first.id }) { (t, why) -> RecommendationCard(state, t, why, ai = true) } }
+            }
+        } else if (recs.isNotEmpty()) item(key = "byw") {
+            // No key yet (or AI off): the no-AI fallback row, with a nudge to add a key.
+            CatalogRow(title = "Because you watched") {
+                if (state.aiKeyLast4 == null && profile.setting("ai.recommendations") == "On") item(key = "add-key") { AddKeyCard(state) }
+                items(recs, key = { "byw-" + it.first.id }) { (t, why) -> RecommendationCard(state, t, why, ai = false) }
             }
         }
         item(key = "moods") { CatalogRow(title = "Browse by mood") { items(Shelves.moods, key = { it.name }) { ShelfCard(state, it) } } }
@@ -195,12 +201,26 @@ fun PosterCard(state: AppState, t: Title, focus: FocusRequester? = null) {
 }
 
 @Composable
-private fun RecommendationCard(state: AppState, t: Title, why: String) {
+private fun AddKeyCard(state: AppState) {
+    Column(Modifier.width(150.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        FocusBox({ state.go(Screen.AiKey) }, Modifier.width(150.dp).height(150.dp), background = C.Panel, focusedBackground = C.Raised) {
+            Column(Modifier.fillMaxSize().border(1.dp, C.LineStrong, RoundedCornerShape(8.dp)).padding(12.dp), verticalArrangement = Arrangement.Center) {
+                T("✦ AI picks", 13.sp, C.Accent, FontWeight.Bold)
+                T("Add your Claude API key to get picks chosen for you, with a reason for each.", 9.sp, C.Soft)
+                T("Add key ›", 10.sp, weight = FontWeight.SemiBold, modifier = Modifier.padding(top = 6.dp))
+            }
+        }
+        T("Uses your own Anthropic account", 8.sp, C.Muted, maxLines = 2)
+    }
+}
+
+@Composable
+private fun RecommendationCard(state: AppState, t: Title, why: String, ai: Boolean) {
     Column(Modifier.width(100.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         FocusBox({ state.go(Screen.Details(t.id)) }, Modifier.width(100.dp).height(150.dp), background = t.tint) {
             ArtImage(t.posterArt, Modifier.fillMaxSize())
             if (!Art.has(t.posterArt)) Box(Modifier.fillMaxSize().padding(8.dp), contentAlignment = Alignment.BottomStart) { T(t.name, 10.sp, weight = FontWeight.SemiBold) }
-            Box(Modifier.fillMaxSize().padding(5.dp), contentAlignment = Alignment.TopStart) {
+            if (ai) Box(Modifier.fillMaxSize().padding(5.dp), contentAlignment = Alignment.TopStart) {
                 Box(Modifier.clip(RoundedCornerShape(4.dp)).background(C.Bg.copy(alpha = 0.75f)).padding(horizontal = 4.dp, vertical = 1.dp)) { T("✦ AI", 7.sp, C.Accent, FontWeight.Bold) }
             }
         }

@@ -181,6 +181,7 @@ sealed interface Screen {
     data object SignIn : Screen
     data class SimklPin(val profileId: String) : Screen
     data class Collection(val kind: String, val name: String) : Screen
+    data object AiKey : Screen
 }
 
 enum class Tab(val label: String) { SEARCH("Search"), HOME("Home"), MOVIES("Movies"), SERIES("Series"), LIBRARY("Library") }
@@ -193,6 +194,9 @@ class AppState {
     )
     var current by mutableStateOf(profiles[0])
     var signedIn by mutableStateOf(true)
+    /** The account owner's own Claude API key: the server keeps it encrypted; devices only ever see the last 4 characters. */
+    var aiKeyLast4 by mutableStateOf<String?>(null)
+    fun aiActive(p: Profile = current) = aiKeyLast4 != null && p.setting("ai.recommendations") == "On"
     var alwaysAsk by mutableStateOf(true)
     var toast by mutableStateOf<String?>(null)
 
