@@ -58,7 +58,7 @@ object C {
     val Soft = Color(0xFFC9CFDB)
     val Muted = Color(0xFFA3ABBD)
     val Faint = Color(0xFF8F98AB)
-    val Accent = Color(0xFFE8B04B)
+    val Accent = Color(0xFF9B6DFF)
     val Good = Color(0xFF7BD88F)
     val Warn = Color(0xFFF3C873)
     val Glass = Color(0x1FEEF0F5)

@@ -56,7 +56,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private val Accent = Color(0xFFE8B04B)
+private val Accent = Color(0xFF9B6DFF)
 private val Muted = Color(0xFF9AA2B4)
 private val Panel = Color(0xFF12151D)
 
