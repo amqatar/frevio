@@ -1,0 +1,67 @@
+name: Build
+
+on:
+  # Branch pushes build through their pull request; main builds on its own.
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Shared logic tests
+        run: ./gradlew :shared:jvmTest --stacktrace
+
+      - name: Build TV test app (debug APK)
+        run: ./gradlew :tv:assembleDebug --continue
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: frevio-player-test-${{ github.sha }}
+          path: tv/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+  prototype-windows:
+    # The click-through UI prototype as a Windows app (no installer: unzip and run).
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Fetch open-movie artwork (Wikimedia Commons, free licences only)
+        continue-on-error: true
+        run: python tools/fetch-open-movie-art.py
+
+      - name: Build Windows app
+        run: ./gradlew :prototype:createDistributable
+
+      - name: Upload Windows app
+        uses: actions/upload-artifact@v4
+        with:
+          name: frevio-prototype-windows
+          path: prototype/build/compose/binaries/main/app/
+          if-no-files-found: error
