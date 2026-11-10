@@ -11,11 +11,20 @@ The home screen shows a **Recommended for you** row directly after Continue watc
 3. **Ranking (Claude).** Claude returns 10 picks as structured JSON: IMDb id plus a reason of 60 characters or less that names a title the profile watched. **The server drops any id that isn't in the candidate list**, so the model can't invent titles or point at something no addon can play.
 4. **Fallback.** If the call fails or is refused, the row becomes "Because you watched X", built from TMDB similar titles with no AI. Users still see a row.
 
-## When it runs
+## When it runs (the owner chooses, in Settings › Integrations)
 
-- **Nightly** for every profile active in the last 14 days, through the Message Batches API (half the price of normal calls, results within hours).
-- **On demand** after a profile finishes a title, at most once every 6 hours per profile.
-- Results are stored per profile for 24 hours (table `recommendations`) and served from there, so opening the home screen never waits on the model.
+| Setting | Options | Default |
+|---|---|---|
+| Refresh schedule | Nightly · Twice a day · Weekly · Manual only | Nightly |
+| Nightly time | 01:00 · 03:00 · 05:00 (TV's time zone) | 03:00 |
+| Also refresh after finishing a title | On · Off (never more often than every 6 hours per profile) | On |
+| Daily limit | 2 · 4 · 8 runs per profile | 4 |
+| Refresh now | Runs straight away for the current profile, within the daily limit | — |
+
+- Scheduled runs (nightly, twice a day, weekly) go through the Message Batches API at half price, and results arrive within hours. Refresh now and the after-finishing refresh are normal calls at full price, and results come back in seconds.
+- Only profiles active in the last 14 days are refreshed on schedule.
+- Settings shows when each profile was last refreshed, and an estimated monthly cost that updates as the options change.
+- Picks are stored per profile and served from storage, so opening the home screen never waits on the model.
 
 ## The user's Claude key
 
@@ -64,7 +73,7 @@ const valid = res.parsed_output?.picks.filter(p => candidateIds.has(p.imdbId)) ?
 
 ## Cost (estimate, pre-measurement)
 
-The user pays this on their own Anthropic account. A run sends about 12K input tokens (system prompt, roughly 150 candidates, history) and gets back about 1.5K output tokens. At Claude Opus 5.5's list price ($4 input / $20 output per million tokens) that's about $0.08 per run, or about **$0.04 through the nightly batch**. That's roughly **$1.20 per active profile per month**, more if on-demand refreshes are frequent.
+The user pays this on their own Anthropic account. A run sends about 12K input tokens (system prompt, roughly 150 candidates, history) and gets back about 1.5K output tokens. At Claude Opus 5.5's list price ($4 input / $20 output per million tokens) that's about $0.08 per run, or about **$0.04 through the nightly batch**. With the default settings (nightly, plus about one after-finishing refresh a day) that's roughly **$3.60 per active profile per month**: 30 batch runs plus about 30 full-price runs. Nightly only is about $1.20; weekly only is about $0.20.
 
 **Your call:** Claude Haiku 5.5 ($0.10 / $0.50) would cost about 40 times less, roughly 3 cents per profile per month, but its picks may be weaker. The plan is to run both models on the same sample of profiles in phase 2, compare the picks, and then choose.
 

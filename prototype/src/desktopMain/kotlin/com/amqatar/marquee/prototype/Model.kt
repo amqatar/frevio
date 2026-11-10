@@ -164,6 +164,8 @@ class Profile(id: String, name: String, val color: Color, kids: Boolean = false,
     var simklLastSync by mutableStateOf<String?>(null)
     /** "Not interested" marks: removed from recommendations and sent as feedback to the server. */
     val notInterested = mutableStateListOf<String>()
+    var aiLastRefresh by mutableStateOf("last night, 03:00")
+    var aiRunsToday by mutableStateOf(1)
 
     fun continueRow(): List<ContinueItem> = continueWatching(progress.values) { t, v -> Mock.nextEpisode(t, v) }
 
@@ -196,6 +198,18 @@ class AppState {
     var signedIn by mutableStateOf(true)
     /** The account owner's own Claude API key: the server keeps it encrypted; devices only ever see the last 4 characters. */
     var aiKeyLast4 by mutableStateOf<String?>(null)
+    // Account-wide AI timing, chosen by the owner (their key pays for it).
+    var aiSchedule by mutableStateOf("Nightly")
+    var aiNightlyTime by mutableStateOf("03:00")
+    var aiAfterFinish by mutableStateOf(true)
+    var aiDailyLimit by mutableStateOf(4)
+
+    /** Estimated monthly cost per active profile in USD: batch run 0.04, full-price run 0.08 (docs/ai-recommendations.md). */
+    fun aiMonthlyCost(): Double {
+        val scheduled = when (aiSchedule) { "Nightly" -> 30.0; "Twice a day" -> 60.0; "Weekly" -> 4.3; else -> 0.0 }
+        val onDemand = if (aiAfterFinish) 30.0 else 0.0
+        return scheduled * 0.04 + onDemand * 0.08
+    }
     fun aiActive(p: Profile = current) = aiKeyLast4 != null && p.setting("ai.recommendations") == "On"
     var alwaysAsk by mutableStateOf(true)
     var toast by mutableStateOf<String?>(null)

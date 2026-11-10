@@ -150,6 +150,24 @@ fun SettingsScreen(state: AppState, section: String) {
                         ) { state.go(Screen.AiKey) }
                     }
                     if (state.aiKeyLast4 != null) item { ActionRow("Remove Claude key", "Deletes it from the server; AI picks stop", "") { state.aiKeyLast4 = null; state.say("Claude key removed") } }
+                    if (state.aiKeyLast4 != null) {
+                        val p = state.current
+                        item { ActionRow("Refresh schedule", "Scheduled runs use batch pricing (half price, ready within hours)", state.aiSchedule) {
+                            state.aiSchedule = listOf("Nightly", "Twice a day", "Weekly", "Manual only").let { it[(it.indexOf(state.aiSchedule) + 1) % it.size] }
+                        } }
+                        if (state.aiSchedule == "Nightly" || state.aiSchedule == "Weekly") item { ActionRow("Run time", "TV's time zone", state.aiNightlyTime) {
+                            state.aiNightlyTime = listOf("01:00", "03:00", "05:00").let { it[(it.indexOf(state.aiNightlyTime) + 1) % it.size] }
+                        } }
+                        item { ActionRow("Also refresh after finishing a title", "At most every 6 hours per profile; full price, ready in seconds", if (state.aiAfterFinish) "On" else "Off") { state.aiAfterFinish = !state.aiAfterFinish } }
+                        item { ActionRow("Daily limit", "Most runs per profile per day, including Refresh now", "${state.aiDailyLimit} runs") {
+                            state.aiDailyLimit = listOf(2, 4, 8).let { it[(it.indexOf(state.aiDailyLimit) + 1) % it.size] }
+                        } }
+                        item { ActionRow("Refresh ${p.name}'s picks now", "Last refreshed ${p.aiLastRefresh} · ${p.aiRunsToday} of ${state.aiDailyLimit} runs used today", "") {
+                            if (p.aiRunsToday >= state.aiDailyLimit) state.say("Daily limit reached for ${p.name}. Raise it or wait until tomorrow")
+                            else { p.aiRunsToday++; p.aiLastRefresh = "just now"; state.say("New picks for ${p.name} (mock)") }
+                        } }
+                        item { T("Estimated cost: about \$${"%.2f".format(state.aiMonthlyCost())} per active profile per month on your Anthropic account", 9.sp, C.Muted, modifier = Modifier.padding(top = 4.dp, bottom = 6.dp)) }
+                    }
                     item { ChoiceRow(state, "ai.recommendations", "AI recommendations for ${state.current.name}", if (state.aiKeyLast4 == null) "Needs a Claude API key. Until then: Because you watched rows" else "A Recommended for you row with a reason per pick. Off: Because you watched rows") }
                     if (state.current.notInterested.isNotEmpty()) item { ActionRow("Not interested list", "${state.current.notInterested.size} titles hidden from recommendations", "Clear") { state.current.notInterested.clear(); state.say("Not interested list cleared") } }
                     item { T("API keys for TMDB, MDBList, Simkl and Claude are held by the Marquee server, never on this TV.", 9.sp, C.Muted, modifier = Modifier.padding(top = 6.dp)) }
