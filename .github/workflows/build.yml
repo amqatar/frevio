@@ -7,6 +7,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,6 +30,22 @@ jobs:
 
       - name: Build TV test app (debug APK)
         run: ./gradlew :tv:assembleDebug --continue
+
+      - name: Check the packaged FFmpeg
+        # Both nextlib and libmpv bundle FFmpeg; one copy is packaged. Show which one won
+        # and that both are the same FFmpeg major (ABI-compatible), so neither engine breaks.
+        run: |
+          apk=$(ls tv/build/outputs/apk/debug/*.apk | head -1)
+          unzip -o -q "$apk" 'lib/arm64-v8a/libavcodec.so' -d /tmp/apk
+          packaged=$(sha256sum /tmp/apk/lib/arm64-v8a/libavcodec.so | cut -d' ' -f1)
+          for f in $(find ~/.gradle/caches -path '*transformed/*/jni/arm64-v8a/libavcodec.so'); do
+            lib=$(echo "$f" | sed -E 's#.*/transformed/([^/]+)/jni/.*#\1#')
+            ver=$(strings "$f" | grep -m1 -oE 'Lavc[0-9]+\.[0-9]+\.[0-9]+' || echo unknown)
+            [ "$(sha256sum "$f" | cut -d' ' -f1)" = "$packaged" ] && mark=PACKAGED || mark=dropped
+            echo "$mark  $lib  $ver"
+          done | tee -a "$GITHUB_STEP_SUMMARY"
+          majors=$(find ~/.gradle/caches -path '*transformed/*/jni/arm64-v8a/libavcodec.so' -exec sh -c 'strings "$1" | grep -m1 -oE "Lavc[0-9]+" ' _ {} \; | sort -u | wc -l)
+          [ "$majors" -le 1 ] || { echo "::error::nextlib and libmpv bundle different FFmpeg majors"; exit 1; }
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
