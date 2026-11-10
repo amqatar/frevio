@@ -8,6 +8,7 @@ lifecycle = "2.11.0"
 media3 = "1.11.1"
 libmpv = "1.0.0"
 serialization = "1.12.0"
+compose-multiplatform = "1.12.2"
 
 [libraries]
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
@@ -28,4 +29,5 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

@@ -18,3 +18,4 @@ rootProject.name = "marquee"
 
 include(":shared")
 include(":tv")
+include(":prototype")
