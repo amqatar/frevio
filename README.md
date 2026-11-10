@@ -26,6 +26,6 @@ Locally, with JDK 17 and the Android SDK:
 
 ## Stack
 
-Kotlin 2.4, Android Gradle Plugin 9.5, Compose for TV (`tv-material` 1.1), Media3 1.11.1, nextlib FFmpeg extension (software decoders for Media3), libmpv-android 1.0 (mpv 0.42, FFmpeg 9). Target SDK 36, min SDK 24.
+Kotlin 2.4, Android Gradle Plugin 9.5, Compose for TV (`tv-material` 1.1), Media3 1.11.1, nextlib FFmpeg extension (software decoders for Media3), libmpv-android 1.0 (mpv 0.42, FFmpeg 9). Target SDK 36, min SDK 26.
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.

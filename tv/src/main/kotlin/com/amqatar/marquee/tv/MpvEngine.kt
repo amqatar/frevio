@@ -116,9 +116,11 @@ class MpvEngine(
         }
     }
 
-    private fun onProp(name: String, value: Any) = main.post {
-        props[name] = value
-        refresh()
+    private fun onProp(name: String, value: Any) {
+        main.post {
+            props[name] = value
+            refresh()
+        }
     }
 
     private fun refresh() {

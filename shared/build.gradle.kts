@@ -8,7 +8,7 @@ kotlin {
     android {
         namespace = "com.amqatar.marquee.shared"
         compileSdk = 37
-        minSdk = 24
+        minSdk = 26
     }
     // JVM target so the shared logic is unit-tested on CI without an emulator.
     jvm()
