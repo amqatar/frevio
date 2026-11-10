@@ -38,6 +38,7 @@ const val TV_H = 540f
 fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
+        icon = Art.brandIcon?.let { androidx.compose.ui.graphics.painter.BitmapPainter(it) },
         title = "Frevio prototype · arrows move · Enter selects · Esc goes back",
         state = rememberWindowState(size = DpSize(1280.dp, 760.dp)),
     ) {

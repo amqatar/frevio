@@ -28,6 +28,7 @@ compose.desktop {
             targetFormats(TargetFormat.Msi, TargetFormat.Dmg, TargetFormat.Deb)
             packageName = "Frevio Prototype"
             packageVersion = "1.0.0"
+            windows { iconFile.set(project.file("icons/frevio.ico")) }
         }
     }
 }

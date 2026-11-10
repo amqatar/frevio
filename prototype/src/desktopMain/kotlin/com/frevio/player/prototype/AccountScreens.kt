@@ -33,7 +33,9 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun Logo() = Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-    Box(Modifier.size(22.dp).clip(RoundedCornerShape(6.dp)).background(C.Accent), contentAlignment = Alignment.Center) { Icon(Icons.Play, C.Bg, 10.dp) }
+    val icon = Art.brandIcon
+    if (icon != null) androidx.compose.foundation.Image(icon, "Frevio", Modifier.size(24.dp))
+    else Box(Modifier.size(22.dp).clip(RoundedCornerShape(6.dp)).background(C.Accent), contentAlignment = Alignment.Center) { Icon(Icons.Play, C.Bg, 10.dp) }
     T("Frevio", 15.sp, weight = FontWeight.Bold)
 }
 

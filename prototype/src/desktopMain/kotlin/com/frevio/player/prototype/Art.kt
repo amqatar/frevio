@@ -24,6 +24,15 @@ object Art {
         }
     }
 
+    /** The Frevio app icon (logo 23, Neon gradient). */
+    val brandIcon: ImageBitmap? by lazy {
+        runCatching {
+            Art::class.java.getResourceAsStream("/brand/frevio-icon.png")?.use { s ->
+                org.jetbrains.skia.Image.makeFromEncoded(s.readBytes()).toComposeImageBitmap()
+            }
+        }.getOrNull()
+    }
+
     fun has(name: String?): Boolean = get(name) != null
 
     val credits: List<Credit> by lazy {
