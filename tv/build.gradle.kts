@@ -37,8 +37,13 @@ android {
     }
 
     packaging {
-        // Both native libraries may ship the NDK C++ runtime; one copy is enough.
-        jniLibs.pickFirsts += listOf("**/libc++_shared.so")
+        // nextlib and libmpv each bundle FFmpeg 9 as shared libraries with the same names.
+        // Keep one copy: libmpv's (declared first below), the fuller build mpv needs.
+        jniLibs.pickFirsts += listOf(
+            "**/libc++_shared.so", "**/libavcodec.so", "**/libavformat.so", "**/libavutil.so",
+            "**/libavfilter.so", "**/libavdevice.so", "**/libswresample.so", "**/libswscale.so",
+            "**/libpostproc.so", "**/libdav1d.so",
+        )
     }
 }
 
@@ -55,8 +60,8 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.exoplayer.hls)
     implementation(libs.media3.exoplayer.dash)
-    implementation(libs.nextlib.media3ext)
     implementation(libs.libmpv)
+    implementation(libs.nextlib.media3ext)
 
     implementation(libs.serialization.json)
 }
