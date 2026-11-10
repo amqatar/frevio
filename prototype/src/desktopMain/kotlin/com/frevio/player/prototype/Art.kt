@@ -24,7 +24,7 @@ object Art {
         }
     }
 
-    /** The Frevio app icon (logo 23, Neon gradient). */
+    /** The Frevio app icon (logo 23, Midnight gradient). */
     val brandIcon: ImageBitmap? by lazy {
         runCatching {
             Art::class.java.getResourceAsStream("/brand/frevio-icon.png")?.use { s ->
