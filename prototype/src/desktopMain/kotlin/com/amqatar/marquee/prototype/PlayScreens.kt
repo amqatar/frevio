@@ -92,6 +92,9 @@ fun DetailsScreen(state: AppState, titleId: String) {
                             else -> PillButton("Play S1 E1", { state.go(Screen.Streams(t.id, t.episodes.first().id)) }, primary = true, icon = Icons.Play, focusRequester = main)
                         }
                         LibraryButton(state, t)
+                        if (p.setting("ai.recommendations") == "On") PillButton(if (t.id in p.notInterested) "Interested again" else "Not interested", {
+                            if (t.id in p.notInterested) p.notInterested.remove(t.id) else { p.notInterested.add(t.id); state.say("Won't recommend ${t.name} to ${p.name} (feedback sent to the server)") }
+                        })
                         PillButton("Trailer", { state.say("Trailer opens YouTube (link from the metadata addon)") })
                         if (t.kind == Kind.MOVIE) PillButton(if (movieProgress?.isWatched() == true) "Mark unwatched" else "Mark watched", {
                             if (movieProgress?.isWatched() == true) p.progress.remove(t.id)

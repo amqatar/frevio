@@ -14,6 +14,7 @@ The TV app reaches v1.0 in about 16 to 22 working weeks, the Android phone app a
 | API | Versioned REST on Cloudflare Workers, OpenAPI 3.1 spec, generated clients |
 | Test hardware | TCL C6K, soundbar on HDMI eARC |
 | Metadata and tracking | TMDB enrichment, IMDb ratings via MDBList, Simkl tracking per profile; all keys server-side ([spec](metadata-and-tracking.md)) |
+| AI recommendations | "Recommended for you" row after Continue watching, ranked by Claude on the server from playable candidates only, with a reason per pick ([spec](ai-recommendations.md)) |
 
 ## Phases
 

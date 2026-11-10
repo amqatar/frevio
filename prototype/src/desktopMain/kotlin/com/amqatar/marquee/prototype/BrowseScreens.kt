@@ -99,6 +99,12 @@ private fun HomeContent(state: AppState) {
                 items(cw, key = { it.titleId }) { ContinueCard(state, it) }
             }
         }
+        if (profile.setting("ai.recommendations") == "On") {
+            val recs = state.recommendations()
+            if (recs.isNotEmpty()) item(key = "ai") {
+                CatalogRow(title = "Recommended for you  ✦ AI") { items(recs, key = { "ai-" + it.first.id }) { (t, why) -> RecommendationCard(state, t, why) } }
+            }
+        }
         item(key = "moods") { CatalogRow(title = "Browse by mood") { items(Shelves.moods, key = { it.name }) { ShelfCard(state, it) } } }
         catalogs.forEach { (catalog, addon) ->
             val titles = state.visible(Mock.all).filter { it.catalog == catalog }
@@ -185,6 +191,21 @@ fun PosterCard(state: AppState, t: Title, focus: FocusRequester? = null) {
             }
         }
         T(t.year, 9.sp, C.Muted)
+    }
+}
+
+@Composable
+private fun RecommendationCard(state: AppState, t: Title, why: String) {
+    Column(Modifier.width(100.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        FocusBox({ state.go(Screen.Details(t.id)) }, Modifier.width(100.dp).height(150.dp), background = t.tint) {
+            ArtImage(t.posterArt, Modifier.fillMaxSize())
+            if (!Art.has(t.posterArt)) Box(Modifier.fillMaxSize().padding(8.dp), contentAlignment = Alignment.BottomStart) { T(t.name, 10.sp, weight = FontWeight.SemiBold) }
+            Box(Modifier.fillMaxSize().padding(5.dp), contentAlignment = Alignment.TopStart) {
+                Box(Modifier.clip(RoundedCornerShape(4.dp)).background(C.Bg.copy(alpha = 0.75f)).padding(horizontal = 4.dp, vertical = 1.dp)) { T("✦ AI", 7.sp, C.Accent, FontWeight.Bold) }
+            }
+        }
+        T(t.name, 9.sp, weight = FontWeight.SemiBold, maxLines = 1)
+        T(why, 8.sp, C.Muted, maxLines = 2)
     }
 }
 

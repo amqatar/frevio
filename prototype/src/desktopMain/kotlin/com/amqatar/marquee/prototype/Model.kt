@@ -162,6 +162,8 @@ class Profile(id: String, name: String, val color: Color, kids: Boolean = false,
     /** Simkl account linked to this profile (token held by the API server, never the TV). */
     var simklUser by mutableStateOf<String?>(null)
     var simklLastSync by mutableStateOf<String?>(null)
+    /** "Not interested" marks: removed from recommendations and sent as feedback to the server. */
+    val notInterested = mutableStateListOf<String>()
 
     fun continueRow(): List<ContinueItem> = continueWatching(progress.values) { t, v -> Mock.nextEpisode(t, v) }
 
@@ -219,6 +221,21 @@ class AppState {
     }
 
     fun say(msg: String) { toast = msg }
+
+    /**
+     * Mock of the server's AI row: candidates = playable, unwatched, not in Continue watching,
+     * not marked Not interested, kids-filtered; each pick names a watched title as its reason.
+     * The real row comes from Claude on the server (docs/ai-recommendations.md).
+     */
+    fun recommendations(): List<Pair<Title, String>> {
+        val p = current
+        val touched = p.progress.values.map { it.titleId }.toSet()
+        val seeds = p.progress.values.sortedByDescending { it.updatedAt }.map { Mock.title(it.titleId) }.distinct().take(4)
+        val pool = visible(Mock.all).filter { it.id !in touched && it.id !in p.notInterested }
+        if (seeds.isEmpty()) return pool.take(8).map { it to "Popular with profiles like yours" }
+        val matched = pool.mapNotNull { t -> seeds.firstOrNull { s -> s.genres.any { it in t.genres } }?.let { s -> t to "Because you watched ${s.name}" } }
+        return (matched.ifEmpty { pool.map { it to "Something different for tonight" } }).take(10)
+    }
 }
 
 private fun Profile.seedProgress() {
@@ -248,4 +265,5 @@ val SettingDefaults = mapOf(
     "meta.tmdb" to "On",
     "meta.language" to "English",
     "meta.ratings" to "IMDb, RT, Metacritic, Letterboxd",
+    "ai.recommendations" to "On",
 )
