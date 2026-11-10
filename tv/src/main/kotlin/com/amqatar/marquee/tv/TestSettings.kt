@@ -14,11 +14,6 @@ enum class FrameRateMode(val label: String) {
     SWITCH("Switch display mode"),
 }
 
-enum class Media3Decoders(val label: String) {
-    PLATFORM_FIRST("Hardware first"),
-    FFMPEG_FIRST("FFmpeg first"),
-}
-
 enum class MpvAudio(val label: String) {
     DECODE("Decode"),
     PASSTHROUGH("Passthrough"),
@@ -29,7 +24,6 @@ data class TestSettings(
     val baseUrl: String = "",
     val tunneling: Boolean = false,
     val frameRate: FrameRateMode = FrameRateMode.SWITCH,
-    val media3Decoders: Media3Decoders = Media3Decoders.PLATFORM_FIRST,
     val mpvAudio: MpvAudio = MpvAudio.PASSTHROUGH,
 ) {
     fun save(context: Context) {
@@ -37,7 +31,6 @@ data class TestSettings(
             .putString("baseUrl", baseUrl)
             .putBoolean("tunneling", tunneling)
             .putString("frameRate", frameRate.name)
-            .putString("media3Decoders", media3Decoders.name)
             .putString("mpvAudio", mpvAudio.name)
             .apply()
     }
@@ -53,7 +46,6 @@ data class TestSettings(
                 baseUrl = p.getString("baseUrl", "").orEmpty(),
                 tunneling = p.getBoolean("tunneling", false),
                 frameRate = enumOr(FrameRateMode.entries.toTypedArray(), "frameRate", FrameRateMode.SWITCH),
-                media3Decoders = enumOr(Media3Decoders.entries.toTypedArray(), "media3Decoders", Media3Decoders.PLATFORM_FIRST),
                 mpvAudio = enumOr(MpvAudio.entries.toTypedArray(), "mpvAudio", MpvAudio.PASSTHROUGH),
             )
         }

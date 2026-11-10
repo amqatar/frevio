@@ -19,7 +19,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.audio.AudioSink
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
-import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -51,19 +50,14 @@ interface TestPlayer {
 }
 
 class Media3Engine(context: Context, url: String, settings: TestSettings) : TestPlayer {
-    private val state = MutableStateFlow(Diagnostics(engine = "Media3 (${settings.media3Decoders.label}${if (settings.tunneling) ", tunneled" else ""})"))
+    private val state = MutableStateFlow(Diagnostics(engine = "Media3${if (settings.tunneling) " (tunneled)" else ""}"))
     override val diagnostics: StateFlow<Diagnostics> = state
 
     private val player: ExoPlayer
 
     init {
-        val renderers = NextRenderersFactory(context).apply {
-            setExtensionRendererMode(
-                if (settings.media3Decoders == Media3Decoders.FFMPEG_FIRST) DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
-                else DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON,
-            )
-            setEnableDecoderFallback(true)
-        }
+        // Platform decoders only: the TV's hardware decoders, then Android's software ones.
+        val renderers = DefaultRenderersFactory(context).setEnableDecoderFallback(true)
         val trackSelector = DefaultTrackSelector(context).apply {
             setParameters(buildUponParameters().setTunnelingEnabled(settings.tunneling))
         }
@@ -157,7 +151,7 @@ class Media3Engine(context: Context, url: String, settings: TestSettings) : Test
     }
 
     companion object {
-        /** Hardware means a MediaCodec the platform marks as accelerated. FFmpeg extension decoders are never listed there. */
+        /** Hardware means a MediaCodec the platform marks as accelerated. */
         fun isHardwareCodec(name: String): Boolean {
             if (Build.VERSION.SDK_INT >= 29) {
                 MediaCodecList(MediaCodecList.ALL_CODECS).codecInfos.firstOrNull { it.name == name }?.let { return it.isHardwareAccelerated }

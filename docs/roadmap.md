@@ -9,7 +9,7 @@ The TV app reaches v1.0 in about 16 to 22 working weeks, the Android phone app a
 | Platform | Google TV first; Android phone, iOS and others later |
 | Distribution | Sideload only (no Play Store) |
 | Language | Kotlin Multiplatform: shared core, Compose for TV app; iOS reuses the core |
-| Player | Media3 (hardware, HDR, passthrough) with nextlib FFmpeg software decoders; libmpv as the second engine |
+| Player | Media3 (hardware, HDR, passthrough); libmpv as the second engine; one self-built LGPL FFmpeg shared by Media3's FFmpeg extension and mpv in the product |
 | Central database | Supabase project of its own, separate from the attendance system |
 | API | Versioned REST on Cloudflare Workers, OpenAPI 3.1 spec, generated clients |
 | Test hardware | TCL C6K, soundbar on HDMI eARC |
@@ -46,5 +46,5 @@ The TV app reaches v1.0 in about 16 to 22 working weeks, the Android phone app a
 | No 4K software decoding fast enough for AV1/VVC | Phase 1 measures it; the app blocks those streams with a message |
 | Dolby Vision profile 7 unsupported | Fall back to the HDR10 base layer and say so |
 | Soundbar lacks DTS or lossless formats | Fallback chain: bitstream, multichannel PCM, Dolby Digital 5.1, stereo |
-| GPL obligations from the prebuilt FFmpeg/mpv libraries | Decide before v1.0: publish source, or build LGPL versions in CI |
+| GPL obligations from the prebuilt libmpv build | Decide before v1.0: publish source, or build LGPL versions in CI |
 | Release key lost | Offline backups; cloud sync limits the damage |

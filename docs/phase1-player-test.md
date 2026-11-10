@@ -63,7 +63,6 @@ Settings on the home screen, to repeat runs where they matter:
 | Setting | Values | When to change it |
 |---|---|---|
 | Frame rate | Off / Seamless only / Switch display mode | Run the frame-rate clips under *Switch* and *Off* |
-| Media3 | Hardware first / FFmpeg first | *FFmpeg first* shows whether software decoding keeps up |
 | Tunneling | Off / On | Repeat the 4K HDR clips with it on; it can fix AV sync and judder on TVs |
 | mpv audio | Decode / Passthrough / To Dolby Digital 5.1 | For DTS files, run *To Dolby Digital 5.1*. This is the fallback test for a soundbar that lacks DTS |
 
@@ -90,6 +89,6 @@ The report includes the device panel: what the soundbar advertises over eARC, wh
 
 ## Licence note
 
-The two prebuilt native libraries used here, nextlib's FFmpeg extension and libmpv-android, are GPL-3.0 builds. That's fine for an internal test app. Before v1.0 you need to decide between:
+The prebuilt libmpv-android library used here is a GPL-3.0 build. Phase 1 uses Media3 with platform decoders only; Media3's FFmpeg extension returns in the product build, sharing one FFmpeg with mpv. That's fine for an internal test app. Before v1.0 you need to decide between:
 - publishing the app's source under GPL-3.0 to everyone who gets the APK, or
 - building LGPL versions of FFmpeg and mpv ourselves in CI, which takes more build work but keeps the app's source private.

@@ -172,9 +172,6 @@ private fun HomeScreen(
                     OutlinedButton(onClick = { onSettings(settings.copy(frameRate = settings.frameRate.next(FrameRateMode.entries))) }) {
                         Text("Frame rate: ${settings.frameRate.label}")
                     }
-                    OutlinedButton(onClick = { onSettings(settings.copy(media3Decoders = settings.media3Decoders.next(Media3Decoders.entries))) }) {
-                        Text("Media3: ${settings.media3Decoders.label}")
-                    }
                     OutlinedButton(onClick = { onSettings(settings.copy(tunneling = !settings.tunneling)) }) {
                         Text("Tunneling: ${if (settings.tunneling) "On" else "Off"}")
                     }

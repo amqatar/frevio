@@ -37,13 +37,9 @@ android {
     }
 
     packaging {
-        // nextlib and libmpv each bundle FFmpeg 9 as shared libraries with the same names.
-        // Keep one copy: libmpv's (declared first below), the fuller build mpv needs.
-        jniLibs.pickFirsts += listOf(
-            "**/libc++_shared.so", "**/libavcodec.so", "**/libavformat.so", "**/libavutil.so",
-            "**/libavfilter.so", "**/libavdevice.so", "**/libswresample.so", "**/libswscale.so",
-            "**/libpostproc.so", "**/libdav1d.so",
-        )
+        // One FFmpeg only: libmpv's. (Phase 1 leaves out Media3's FFmpeg extension; two
+        // bundled FFmpeg builds collide and AGP does not guarantee which copy it keeps.)
+        jniLibs.pickFirsts += listOf("**/libc++_shared.so")
     }
 }
 
@@ -61,7 +57,6 @@ dependencies {
     implementation(libs.media3.exoplayer.hls)
     implementation(libs.media3.exoplayer.dash)
     implementation(libs.libmpv)
-    implementation(libs.nextlib.media3ext)
 
     implementation(libs.serialization.json)
 }
