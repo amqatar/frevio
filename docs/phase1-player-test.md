@@ -31,7 +31,7 @@ cd test-media && python3 -m http.server 8000
 In the app, enter `http://<computer-ip>:8000/` and press **Load**. Or set it from the computer:
 
 ```sh
-adb shell am start -n com.amqatar.marquee.tv/.MainActivity --es base http://<computer-ip>:8000/
+adb shell am start -n com.frevio.player/com.frevio.player.tv.MainActivity --es base http://<computer-ip>:8000/
 ```
 
 ### Real-world samples FFmpeg can't generate
@@ -71,7 +71,7 @@ Settings on the home screen, to repeat runs where they matter:
 Either photograph the Results screen, or pull the report file and attach it to a GitHub issue:
 
 ```sh
-adb pull /sdcard/Android/data/com.amqatar.marquee.tv/files/report.json
+adb pull /sdcard/Android/data/com.frevio.player/files/report.json
 ```
 
 The report includes the device panel: what the soundbar advertises over eARC, which formats Android will bitstream right now, display modes and HDR types, RAM and 32/64-bit.

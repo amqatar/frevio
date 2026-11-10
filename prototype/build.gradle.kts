@@ -23,7 +23,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "com.amqatar.marquee.prototype.MainKt"
+        mainClass = "com.frevio.player.prototype.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Dmg, TargetFormat.Deb)
             packageName = "Frevio Prototype"

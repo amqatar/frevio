@@ -6,7 +6,7 @@ plugins {
 
 kotlin {
     android {
-        namespace = "com.amqatar.marquee.shared"
+        namespace = "com.frevio.player.shared"
         compileSdk = 37
         minSdk = 26
     }

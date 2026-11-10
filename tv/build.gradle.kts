@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.amqatar.marquee.tv"
+    namespace = "com.frevio.player.tv"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.amqatar.marquee.tv"
+        applicationId = "com.frevio.player"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
