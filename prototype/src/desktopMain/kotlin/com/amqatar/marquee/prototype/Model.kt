@@ -107,6 +107,25 @@ object Mock {
     }
 }
 
+/** A browse card: a mood or a genre, matched against title genres. Original card art, no film stills. */
+data class Shelf(val kind: String, val name: String, val genres: Set<String>, val color: Color, val line: String)
+
+object Shelves {
+    val moods = listOf(
+        Shelf("Mood", "Feel-Good", setOf("Comedy", "Family", "Animation"), Color(0xFF8A5A1F), "Lighten the mood"),
+        Shelf("Mood", "Edge of Your Seat", setOf("Action", "Thriller", "Crime"), Color(0xFF7A2E2E), "Hold your breath"),
+        Shelf("Mood", "Mind-Bending", setOf("Sci-Fi", "Mystery"), Color(0xFF3D3A7A), "Think about it after"),
+        Shelf("Mood", "Spooky", setOf("Horror"), Color(0xFF2E4A3A), "Lights off"),
+        Shelf("Mood", "Epic & Sweeping", setOf("Fantasy", "Action"), Color(0xFF6A4A16), "Big screen energy"),
+        Shelf("Mood", "Unplug & Unwind", setOf("Animation", "Family"), Color(0xFF2C5466), "Easy watching"),
+        Shelf("Mood", "Tearjerkers", setOf("Drama"), Color(0xFF55304F), "Keep tissues close"),
+    )
+    val genres = listOf("Action", "Comedy", "Animation", "Sci-Fi", "Fantasy", "Horror", "Drama", "Family").mapIndexed { i, g ->
+        Shelf("Genre", g, setOf(g), listOf(0xFF33395A, 0xFF4A3046, 0xFF2F4A42, 0xFF4B3F2A, 0xFF2B3A55, 0xFF4A2F2F, 0xFF2C4452, 0xFF3F3A52).map { Color(it) }[i], "")
+    }
+    fun find(kind: String, name: String) = (moods + genres).first { it.kind == kind && it.name == name }
+}
+
 data class Addon(val id: String, val name: String, val provides: String, val catalogs: List<String>, val streams: Boolean)
 
 val defaultAddons = listOf(
@@ -159,6 +178,7 @@ sealed interface Screen {
     data class Settings(val section: String = "Audio") : Screen
     data object SignIn : Screen
     data class SimklPin(val profileId: String) : Screen
+    data class Collection(val kind: String, val name: String) : Screen
 }
 
 enum class Tab(val label: String) { SEARCH("Search"), HOME("Home"), MOVIES("Movies"), SERIES("Series"), LIBRARY("Library") }

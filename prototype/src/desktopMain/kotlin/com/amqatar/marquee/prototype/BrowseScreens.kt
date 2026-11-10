@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -98,12 +99,14 @@ private fun HomeContent(state: AppState) {
                 items(cw, key = { it.titleId }) { ContinueCard(state, it) }
             }
         }
+        item(key = "moods") { CatalogRow(title = "Browse by mood") { items(Shelves.moods, key = { it.name }) { ShelfCard(state, it) } } }
         catalogs.forEach { (catalog, addon) ->
             val titles = state.visible(Mock.all).filter { it.catalog == catalog }
             if (titles.isNotEmpty()) item(key = catalog) {
                 CatalogRow(title = "$catalog · $addon") { items(titles, key = { it.id }) { PosterCard(state, it) } }
             }
         }
+        item(key = "genres") { CatalogRow(title = "Browse by genre") { items(Shelves.genres, key = { it.name }) { ShelfCard(state, it) } } }
         if (catalogs.isEmpty()) item {
             Box(Modifier.padding(36.dp)) { T("No catalog addons for this profile. Add one in Settings › Addons.", 12.sp, C.Muted) }
         }
@@ -185,11 +188,42 @@ fun PosterCard(state: AppState, t: Title, focus: FocusRequester? = null) {
     }
 }
 
+/** Original card design: colour field, kicker, large title, outline ring. No film stills. */
+@Composable
+private fun ShelfCard(state: AppState, shelf: Shelf) {
+    val count = state.visible(Mock.all).count { t -> t.genres.any { it in shelf.genres } }
+    FocusBox({ state.go(Screen.Collection(shelf.kind, shelf.name)) }, Modifier.width(176.dp).height(99.dp), background = shelf.color) {
+        Box(Modifier.fillMaxSize()) {
+            Box(Modifier.align(Alignment.TopEnd).offset(x = 28.dp, y = (-34).dp).size(110.dp).border(12.dp, Color.White.copy(alpha = 0.08f), CircleShape))
+            Column(Modifier.align(Alignment.BottomStart).padding(10.dp), verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                T(shelf.kind.uppercase(), 7.sp, Color.White.copy(alpha = 0.7f), FontWeight.SemiBold)
+                T(shelf.name, 15.sp, Color.White, FontWeight.Bold, maxLines = 1)
+                T(if (shelf.line.isNotEmpty()) "${shelf.line} · $count titles" else "$count titles", 8.sp, Color.White.copy(alpha = 0.75f), maxLines = 1)
+            }
+        }
+    }
+}
+
+@Composable
+fun CollectionScreen(state: AppState, shelf: Shelf) {
+    val titles = state.visible(Mock.all).filter { t -> t.genres.any { it in shelf.genres } }
+    Column(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxWidth().height(80.dp).background(shelf.color)) {
+            Column(Modifier.align(Alignment.BottomStart).padding(start = 36.dp, bottom = 12.dp)) {
+                T(shelf.kind.uppercase() + " · " + shelf.genres.joinToString(), 8.sp, Color.White.copy(alpha = 0.75f), FontWeight.SemiBold)
+                T(shelf.name, 24.sp, Color.White, FontWeight.Bold)
+            }
+            Box(Modifier.align(Alignment.TopEnd).padding(14.dp)) { T("Esc to go back", 9.sp, Color.White.copy(alpha = 0.7f)) }
+        }
+        Box(Modifier.weight(1f)) { GridContent(state, "", titles, empty = "No titles for this profile in ${shelf.name}.") }
+    }
+}
+
 @Composable
 private fun GridContent(state: AppState, title: String, titles: List<Title>, empty: String = "Nothing here for this profile.") {
     val first = rememberInitialFocus(title)
     Column(Modifier.fillMaxSize().padding(top = 28.dp)) {
-        T(title, 22.sp, weight = FontWeight.Bold, modifier = Modifier.padding(start = 36.dp, bottom = 10.dp))
+        if (title.isNotEmpty()) T(title, 22.sp, weight = FontWeight.Bold, modifier = Modifier.padding(start = 36.dp, bottom = 10.dp))
         if (titles.isEmpty()) T(empty, 12.sp, C.Muted, modifier = Modifier.padding(start = 36.dp))
         LazyVerticalGrid(
             GridCells.Adaptive(100.dp), contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp),

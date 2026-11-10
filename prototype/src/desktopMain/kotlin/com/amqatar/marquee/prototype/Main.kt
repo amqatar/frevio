@@ -86,6 +86,7 @@ fun Router(state: AppState) {
         is Screen.Settings -> SettingsScreen(state, s.section)
         Screen.SignIn -> SignInScreen(state)
         is Screen.SimklPin -> SimklPinScreen(state, s.profileId)
+        is Screen.Collection -> CollectionScreen(state, Shelves.find(s.kind, s.name))
     }
 }
 
