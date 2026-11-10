@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.amqatar.marquee.tv"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.amqatar.marquee.tv"
