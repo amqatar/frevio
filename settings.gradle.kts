@@ -14,7 +14,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "marquee"
+rootProject.name = "frevio"
 
 include(":shared")
 include(":tv")
