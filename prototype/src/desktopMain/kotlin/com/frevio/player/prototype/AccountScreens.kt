@@ -36,7 +36,10 @@ fun Logo() = Row(verticalAlignment = Alignment.CenterVertically, horizontalArran
     val icon = Art.brandIcon
     if (icon != null) androidx.compose.foundation.Image(icon, "Frevio", Modifier.size(24.dp))
     else Box(Modifier.size(22.dp).clip(RoundedCornerShape(6.dp)).background(C.Accent), contentAlignment = Alignment.Center) { Icon(Icons.Play, C.Bg, 10.dp) }
-    T("Frevio", 15.sp, weight = FontWeight.Bold)
+    androidx.compose.foundation.text.BasicText(
+        "Frevio",
+        style = androidx.compose.ui.text.TextStyle(color = C.Text, fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = Art.wordmarkFont),
+    )
 }
 
 @Composable

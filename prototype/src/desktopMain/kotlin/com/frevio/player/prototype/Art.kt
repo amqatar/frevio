@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 
 /** Artwork bundled at build time by tools/fetch-open-movie-art.py (absent = placeholders). */
 object Art {
@@ -29,6 +30,17 @@ object Art {
         runCatching {
             Art::class.java.getResourceAsStream("/brand/frevio-icon.png")?.use { s ->
                 org.jetbrains.skia.Image.makeFromEncoded(s.readBytes()).toComposeImageBitmap()
+            }
+        }.getOrNull()
+    }
+
+    /** Sora Bold, the Frevio wordmark font (SIL Open Font License, see brand/Sora-OFL.txt). */
+    val wordmarkFont: androidx.compose.ui.text.font.FontFamily? by lazy {
+        runCatching {
+            Art::class.java.getResourceAsStream("/brand/Sora-Bold.ttf")?.use { s ->
+                androidx.compose.ui.text.font.FontFamily(
+                    androidx.compose.ui.text.platform.Font("Sora-Bold", s.readBytes(), FontWeight.Bold),
+                )
             }
         }.getOrNull()
     }
